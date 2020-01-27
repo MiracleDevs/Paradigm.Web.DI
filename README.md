@@ -1,4 +1,4 @@
-# Paradigm.Web.DI
+# Paradigm Web DI
 A minimal dependency injection framework for the web.
 
 # Building
@@ -78,8 +78,7 @@ The framework works with 3 dependency types:
 | --- | --- |
 | Transient | Every time a class request a transient service, the framework will create a new instance. So, each class will have their own instance of the given transient service. |
 | Singleton | The framework will allow only one instance of a given type per application life cycle. Every time a class request a singleton reference, the framework will return the same reference. |
-| Scoped | The global dependency container allows you to create scoped containers. Scoped containers are containers isolated from the global container. When you mark a service a scoped, that service will exist as a singleton inside the scope asking to resolve the class. This may be difficult to understand at first, but let's present an example: On a web server, each request should have their own instances, and they shouldn't know about each other. In this case, you can create a new scope per request, and scope your singleton services if you want the same reference along the request, but not globally accessible to every request.
-|
+| Scoped | The global dependency container allows you to create scoped containers. Scoped containers are containers isolated from the global container. When you mark a service a scoped, that service will exist as a singleton inside the scope asking to resolve the class. This may be difficult to understand at first, but let's present an example: On a web server, each request should have their own instances, and they shouldn't know about each other. In this case, you can create a new scope per request, and scope your singleton services if you want the same reference along the request, but not globally accessible to every request.|
 
 > **Important**: Scoped classes can not be resolved in the global container.
 
