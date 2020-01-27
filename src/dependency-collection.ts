@@ -17,6 +17,9 @@ export class DependencyCollection
         if (this.contains(objectType))
             throw new Error(`The type ${getObjectTypeName(objectType)} is already registered.`);
 
+        if (instance && lifeTime !== DependencyLifeTime.Singleton)
+            throw new Error(`Only the singletons can be registered with an existing instance.`);
+
         this._registeredTypes.set(objectType, new DependencyDescriptor(lifeTime,
             Reflect.hasMetadata("design:paramtypes", objectType)
                 ? Reflect.getMetadata("design:paramtypes", objectType)

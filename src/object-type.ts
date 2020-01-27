@@ -1,6 +1,6 @@
 export type ObjectType<T = any> = (new (...args: any[]) => T);
 
-export function getObjectTypeName(objectType: ObjectType): string
+export function getObjectTypeName<T = any>(objectType: ObjectType<T> | Function | any): string
 {
     if (!objectType)
         return "null object";

@@ -4,7 +4,9 @@
     "description": "A minimal dependency injection library for the web",
     "main": "index.js",
     "scripts": {
-        "test": "test",
+        "test": "jest",
+        "coverage": "jest --coverage",
+        "watch-test": "jest --watch",
         "build": "npm install && tsc --project . --incremental",
         "watch": "npm run build -- --watch"
     },
@@ -28,7 +30,10 @@
     },
     "homepage": "https://github.com/MiracleDevs/Paradigm.Web.DI#readme",
     "devDependencies": {
-        "typescript": "^3.7.5",
-        "reflect-metadata": "^0.1.13"
+        "@types/jest": "^24.9.1",
+        "jest": "^25.1.0",
+        "reflect-metadata": "^0.1.13",
+        "ts-jest": "^25.0.0",
+        "typescript": "^3.7.5"
     }
 }

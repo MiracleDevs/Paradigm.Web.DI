@@ -4,9 +4,13 @@ A minimal dependency injection framework for the web.
 # Building
 
 To build the library:
-
 ```shell
 $ npm run build
+```
+
+To watch-build the library:
+```shell
+$ npm run watch
 ```
 
 To watch for changes and build after every change:
@@ -17,6 +21,16 @@ $ npm run watch
 To test the solution:
 ```shell
 $ npm run test
+```
+
+To watch-test the solution:
+```shell
+$ npm run watch-test
+```
+
+To see the test coverage:
+```shell
+$ npm run coverage
 ```
 
 # How to use
