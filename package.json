@@ -1,0 +1,34 @@
+{
+    "name": "@miracledevs/paradigm.web.di",
+    "version": "1.0.0",
+    "description": "A minimal dependency injection library for the web",
+    "main": "index.js",
+    "scripts": {
+        "test": "test",
+        "build": "npm install && tsc --project . --incremental",
+        "watch": "npm run build -- --watch"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MiracleDevs/Paradigm.Web.DI.git"
+    },
+    "keywords": [
+        "Dependency",
+        "Injection",
+        "DI",
+        "Dependency",
+        "Container",
+        "Injection",
+        "Injectable"
+    ],
+    "author": "Miracle Devs",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/MiracleDevs/Paradigm.Web.DI/issues"
+    },
+    "homepage": "https://github.com/MiracleDevs/Paradigm.Web.DI#readme",
+    "devDependencies": {
+        "typescript": "^3.7.5",
+        "reflect-metadata": "^0.1.13"
+    }
+}
