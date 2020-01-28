@@ -88,7 +88,35 @@ describe("Dependency Collection", () =>
         expect(collection.contains(ScopedClass)).toBeFalsy();
     });
 
-    it("should validate successfully", () =>
+    it("should build without validation", () =>
+    {
+        const collection = new DependencyCollection();
+
+        class ClassA
+        {
+        }
+
+        @Injectable({ collection: collection })
+        class ClassB
+        {
+            constructor(public a: ClassA)
+            {
+            }
+        }
+
+        @Injectable({ collection: collection })
+        class ClassC
+        {
+            constructor(public b: ClassB)
+            {
+            }
+        }
+
+        expect(() => collection.buildContainer()).not.toThrowError();
+    });
+
+
+    it("should build and validate successfully", () =>
     {
         const collection = new DependencyCollection();
 
@@ -113,7 +141,7 @@ describe("Dependency Collection", () =>
             }
         }
 
-        expect(() => collection.validate()).not.toThrowError();
+        expect(() => collection.buildContainer(true)).not.toThrowError();
     });
 
     it("should validate if a class depends on a unregistered class", () =>
@@ -128,7 +156,7 @@ describe("Dependency Collection", () =>
             }
         }
 
-        expect(() => collection.validate()).toThrowError("Errors found on the dependency configuration:\n - The type 'UnregisteredDependencyClass' depends on the type 'UnregisteredClass' but the latter is not registered.");
+        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - The type 'UnregisteredDependencyClass' depends on the type 'UnregisteredClass' but the latter is not registered.");
     });
 
     it("should validate if a singleton depends on a scoped service", () =>
@@ -148,7 +176,7 @@ describe("Dependency Collection", () =>
             }
         }
 
-        expect(() => scopedOnSingletonCollection.validate()).toThrowError("Errors found on the dependency configuration:\n - Cannot consume scoped type 'ScopedDependencyClass' from singleton 'SingletonDependencyClass'.");
+        expect(() => scopedOnSingletonCollection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Cannot consume scoped type 'ScopedDependencyClass' from singleton 'SingletonDependencyClass'.");
     });
 
     it("should validate if a singleton depends on a scoped service on a large hierarchy", () =>
@@ -176,7 +204,7 @@ describe("Dependency Collection", () =>
             }
         }
 
-        expect(() => scopedOnSingletonCollection.validate()).toThrowError("Errors found on the dependency configuration:\n - Cannot consume scoped type 'ScopedDependencyClass' from singleton 'SingletonDependencyClass'.");
+        expect(() => scopedOnSingletonCollection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Cannot consume scoped type 'ScopedDependencyClass' from singleton 'SingletonDependencyClass'.");
     });
 
 
@@ -201,7 +229,7 @@ describe("Dependency Collection", () =>
         collection.registerTransient(ClassA, [ClassB]);
         collection.registerTransient(ClassB, [ClassA]);
 
-        expect(() => collection.validate()).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in ClassA: ClassA -> ClassB -> ClassA.\n - Circular dependency found in ClassB: ClassB -> ClassA -> ClassB.");
+        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in ClassA: ClassA -> ClassB -> ClassA.\n - Circular dependency found in ClassB: ClassB -> ClassA -> ClassB.");
     });
 
 
@@ -234,6 +262,6 @@ describe("Dependency Collection", () =>
         collection.registerTransient(ClassB, [ClassA]);
         collection.registerTransient(ClassC, [ClassB]);
 
-        expect(() => collection.validate()).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in ClassA: ClassA -> ClassC -> ClassB -> ClassA.\n - Circular dependency found in ClassB: ClassB -> ClassA -> ClassC -> ClassB.\n - Circular dependency found in ClassC: ClassC -> ClassB -> ClassA -> ClassC.");
+        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in ClassA: ClassA -> ClassC -> ClassB -> ClassA.\n - Circular dependency found in ClassB: ClassB -> ClassA -> ClassC -> ClassB.\n - Circular dependency found in ClassC: ClassC -> ClassB -> ClassA -> ClassC.");
     });
 });

@@ -8,34 +8,25 @@ export class DependencyContainer
 {
     public static readonly GlobalScope = 'global';
 
-    private static _globalContainer: DependencyContainer;
-
-    static get globalContainer(): DependencyContainer
-    {
-        if (!DependencyContainer._globalContainer)
-        {
-            DependencyContainer._globalContainer = new DependencyContainer(null, DependencyContainer.GlobalScope);
-        }
-
-        return DependencyContainer._globalContainer;
-    }
-
     private _scopedInstances: Map<ObjectType, any>;
+
+    private _collection: DependencyCollection;
 
     private _parent: DependencyContainer;
 
     public readonly name: string;
 
-    private constructor(parent: DependencyContainer, name: string)
+    constructor(parent?: DependencyContainer, collection?: DependencyCollection, name?: string)
     {
         this._scopedInstances = new Map();
+        this._collection = collection;
         this._parent = parent;
         this.name = name;
     }
 
     createScopedInjector(name: string): DependencyContainer
     {
-        return new DependencyContainer(this, name);
+        return new DependencyContainer(this, this._collection, name);
     }
 
     resolve<T = any>(objectType: ObjectType<T>): T
@@ -46,7 +37,7 @@ export class DependencyContainer
                 return this as any as T;
 
             // this will throw if the object type is not registered.
-            const descriptor = DependencyCollection.globalCollection.get(objectType);
+            const descriptor = this._collection.get(objectType);
 
             switch (descriptor.lifeTime)
             {

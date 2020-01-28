@@ -3,6 +3,7 @@ import { DependencyLifeTime } from "./dependency-life-time";
 import { DependencyDescriptorMap } from "./dependency-descriptor-map";
 import { DependencyDescriptor } from "./dependency-descriptor";
 import 'reflect-metadata';
+import { DependencyContainer } from "./dependency-container";
 
 export class DependencyCollection
 {
@@ -62,28 +63,33 @@ export class DependencyCollection
         return this._registeredTypes.has(objectType);
     }
 
-    validate(): void
+    buildContainer(validate: boolean = false): DependencyContainer
     {
-        let errors = '';
-
-        for (const registeredType of this._registeredTypes.keys())
+        if (validate)
         {
-            try
+            let errors = '';
+
+            for (const registeredType of this._registeredTypes.keys())
             {
-                this.validateCircularDependency(registeredType);
-                this.validateDependencyRegistration(registeredType);
-                this.validateScopedOnSingletons(registeredType);
+                try
+                {
+                    this.validateCircularDependency(registeredType);
+                    this.validateDependencyRegistration(registeredType);
+                    this.validateScopedOnSingletons(registeredType);
+                }
+                catch (e)
+                {
+                    errors += ` - ${e.message}\n`;
+                }
             }
-            catch (e)
+
+            if (errors.length > 0)
             {
-                errors += ` - ${e.message}\n`;
+                throw new Error("Errors found on the dependency configuration:\n" + errors);
             }
         }
 
-        if (errors.length > 0)
-        {
-            throw new Error("Errors found on the dependency configuration:\n" + errors);
-        }
+        return new DependencyContainer(null, this, "root");
     }
 
     private validateDependencyRegistration<T>(objectType: ObjectType<T>): void
