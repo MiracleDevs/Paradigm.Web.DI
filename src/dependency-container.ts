@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { ObjectType, getObjectTypeName } from "./object-type";
 import { DependencyLifeTime } from "./dependency-life-time";
 import { DependencyDescriptor } from "./dependency-descriptor";
-import { dependencyCollection } from "./dependency-collection";
+import { DependencyCollection } from "./dependency-collection";
 
 export class DependencyContainer
 {
@@ -46,7 +46,7 @@ export class DependencyContainer
                 return this as any as T;
 
             // this will throw if the object type is not registered.
-            const descriptor = dependencyCollection.get(objectType);
+            const descriptor = DependencyCollection.globalCollection.get(objectType);
 
             switch (descriptor.lifeTime)
             {

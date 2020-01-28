@@ -1,5 +1,5 @@
 export { ObjectType } from "./object-type";
-export { DependencyCollection, dependencyCollection } from "./dependency-collection";
+export { DependencyCollection } from "./dependency-collection";
 export { DependencyContainer } from "./dependency-container";
 export { DependencyDescriptorMap } from "./dependency-descriptor-map";
 export { DependencyDescriptor } from "./dependency-descriptor";

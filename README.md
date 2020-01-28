@@ -1,38 +1,6 @@
 # Paradigm Web DI
 A minimal dependency injection framework for the web.
 
-# Building
-
-To build the library:
-```shell
-$ npm run build
-```
-
-To watch-build the library:
-```shell
-$ npm run watch
-```
-
-To watch for changes and build after every change:
-```shell
-$ npm run watch
-```
-
-To test the solution:
-```shell
-$ npm run test
-```
-
-To watch-test the solution:
-```shell
-$ npm run watch-test
-```
-
-To see the test coverage:
-```shell
-$ npm run coverage
-```
-
 # How to use
 The library was written to be easy to use. You can decorate your classes to register them, or manually register them for later use.
 
@@ -100,7 +68,6 @@ The framework works with 3 dependency types:
 Scoped container can be created from a parent container, and they isolate scoped services from other containers. When resolving dependencies, they can look on their parental hierarchy form already instantiated classes if required.
 
 ```typescript
-// create a new scoped container
 const scopedContainer = container.createScopedInjector("my scope");
 ```
 
@@ -128,3 +95,35 @@ When validating the tree, the framework can validate:
 - **Missing Registration**: If one of your classes is expecting a service on its constructor, but the latter is not registered, the validation will throw an error telling which classes are failing.
 
 - **Scoped Dependencies on Singletons**: If one of your global singletons depends on a scoped service, the framework will fail. Remember, scoped services can only be resolved inside a scoped containers, and singleton live in the global context.
+
+# Building
+
+To build the library:
+```shell
+$ npm run build
+```
+
+To watch-build the library:
+```shell
+$ npm run watch
+```
+
+To watch for changes and build after every change:
+```shell
+$ npm run watch
+```
+
+To test the solution:
+```shell
+$ npm run test
+```
+
+To watch-test the solution:
+```shell
+$ npm run watch-test
+```
+
+To see the test coverage:
+```shell
+$ npm run coverage
+```

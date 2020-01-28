@@ -2,9 +2,20 @@ import { ObjectType, getObjectTypeName } from "./object-type";
 import { DependencyLifeTime } from "./dependency-life-time";
 import { DependencyDescriptorMap } from "./dependency-descriptor-map";
 import { DependencyDescriptor } from "./dependency-descriptor";
+import 'reflect-metadata';
 
 export class DependencyCollection
 {
+    private static _globalCollection: DependencyCollection;
+
+    public static get globalCollection(): DependencyCollection
+    {
+        if (!this._globalCollection)
+            this._globalCollection = new DependencyCollection();
+
+        return this._globalCollection;
+    }
+
     private readonly _registeredTypes: DependencyDescriptorMap;
 
     constructor()
@@ -12,7 +23,7 @@ export class DependencyCollection
         this._registeredTypes = new Map<ObjectType, DependencyDescriptor>();
     }
 
-    register<T = any>(objectType: ObjectType<T>, lifeTime: DependencyLifeTime, instance?: T): void
+    register<T = any>(objectType: ObjectType<T>, lifeTime: DependencyLifeTime, dependencies?: ObjectType[], instance?: T): void
     {
         if (this.contains(objectType))
             throw new Error(`The type ${getObjectTypeName(objectType)} is already registered.`);
@@ -20,25 +31,22 @@ export class DependencyCollection
         if (instance && lifeTime !== DependencyLifeTime.Singleton)
             throw new Error(`Only the singletons can be registered with an existing instance.`);
 
-        this._registeredTypes.set(objectType, new DependencyDescriptor(lifeTime,
-            Reflect.hasMetadata("design:paramtypes", objectType)
-                ? Reflect.getMetadata("design:paramtypes", objectType)
-                : [], instance));
+        this._registeredTypes.set(objectType, new DependencyDescriptor(lifeTime || DependencyLifeTime.Transient, dependencies || [], instance || null));
     }
 
-    registerTransient<T = any>(objectType: ObjectType<T>): void
+    registerTransient<T = any>(objectType: ObjectType<T>, dependencies?: ObjectType[], ): void
     {
-        this.register(objectType, DependencyLifeTime.Transient);
+        this.register(objectType, DependencyLifeTime.Transient, dependencies);
     }
 
-    registerScoped<T = any>(objectType: ObjectType<T>): void
+    registerScoped<T = any>(objectType: ObjectType<T>, dependencies?: ObjectType[], ): void
     {
-        this.register(objectType, DependencyLifeTime.Scoped);
+        this.register(objectType, DependencyLifeTime.Scoped, dependencies);
     }
 
-    registerSingleton<T = any>(objectType: ObjectType<T>, instance: T = null): void
+    registerSingleton<T = any>(objectType: ObjectType<T>, dependencies?: ObjectType[], instance?: T): void
     {
-        this.register(objectType, DependencyLifeTime.Singleton, instance);
+        this.register(objectType, DependencyLifeTime.Singleton, dependencies, instance);
     }
 
     get(objectType: ObjectType): DependencyDescriptor
@@ -60,46 +68,79 @@ export class DependencyCollection
 
         for (const registeredType of this._registeredTypes.keys())
         {
-            errors += this.validateType(registeredType);
+            try
+            {
+                this.validateCircularDependency(registeredType);
+                this.validateDependencyRegistration(registeredType);
+                this.validateScopedOnSingletons(registeredType);
+            }
+            catch (e)
+            {
+                errors += ` - ${e.message}\n`;
+            }
         }
 
         if (errors.length > 0)
         {
-            throw new Error("There are errors on the dependency configuration:\n" + errors);
+            throw new Error("Errors found on the dependency configuration:\n" + errors);
         }
     }
 
-    private validateType<T = any>(objectType: ObjectType<T>): string
+    private validateDependencyRegistration<T>(objectType: ObjectType<T>): void
     {
         const descriptor = this.get(objectType);
-        let errors = '';
 
         for (const dependencyType of descriptor.dependencies)
         {
-            if (dependencyType === objectType)
-            {
-                return ` - Circular dependency found in '${getObjectTypeName(objectType)}'.\n`;
-            }
             if (!this.contains(dependencyType))
             {
-                errors += ` - The type '${getObjectTypeName(objectType)}' depends on the type '${getObjectTypeName(dependencyType)}' but the latter is not registered.\n`;
+                throw new Error(`The type '${getObjectTypeName(objectType)}' depends on the type '${getObjectTypeName(dependencyType)}' but the latter is not registered.`);
             }
-            else
+
+            this.validateDependencyRegistration(dependencyType);
+        }
+    }
+
+    private validateCircularDependency<T>(objectType: ObjectType<T>, dependencies?: ObjectType[], relation?: string): void
+    {
+        if (!relation)
+            relation = getObjectTypeName(objectType);
+
+        if (!dependencies)
+            dependencies = this.get(objectType).dependencies;
+
+        for (const dependencyType of dependencies)
+        {
+            const relationship = `${relation} -> ${getObjectTypeName(dependencyType)}`;
+
+            if (dependencyType === objectType)
             {
-                const dependencyDescriptor = this.get(dependencyType);
+                throw new Error(`Circular dependency found in ${getObjectTypeName(objectType)}: ${relationship}.`);
+            }
 
-                errors += this.validateType(dependencyType);
-
-                if (descriptor.lifeTime === DependencyLifeTime.Singleton &&
-                    dependencyDescriptor.lifeTime === DependencyLifeTime.Scoped)
-                {
-                    errors += ` - Cannot consume scoped type '${getObjectTypeName(dependencyType)}' from singleton '${getObjectTypeName(objectType)}'.\n`;
-                }
+            if (this.contains(dependencyType))
+            {
+                const descriptor = this.get(dependencyType);
+                this.validateCircularDependency(objectType, descriptor.dependencies, relationship);
             }
         }
+    }
 
-        return errors;
+    private validateScopedOnSingletons<T>(objectType: ObjectType<T>): void
+    {
+        const descriptor = this.get(objectType);
+
+        for (const dependencyType of descriptor.dependencies)
+        {
+            const dependencyDescriptor = this.get(dependencyType);
+
+            if (descriptor.lifeTime === DependencyLifeTime.Singleton &&
+                dependencyDescriptor.lifeTime === DependencyLifeTime.Scoped)
+            {
+                throw new Error(`Cannot consume scoped type '${getObjectTypeName(dependencyType)}' from singleton '${getObjectTypeName(objectType)}'.`);
+            }
+
+            this.validateScopedOnSingletons(dependencyType);
+        }
     }
 }
-
-export const dependencyCollection = new DependencyCollection();

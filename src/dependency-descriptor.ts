@@ -9,6 +9,4 @@ export class DependencyDescriptor<TInstance = any>
         public instance?: TInstance)
     {
     }
-
-
 }

@@ -7,6 +7,7 @@
         "test": "jest",
         "coverage": "jest --coverage",
         "watch-test": "jest --watch",
+        "watch-coverage": "jest --coverage --watch",
         "build": "npm install && tsc --project . --incremental",
         "watch": "npm run build -- --watch"
     },

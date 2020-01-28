@@ -23,4 +23,15 @@ describe("getObjectTypeName method", () =>
     it("should return if the object is null", () => expect(getObjectTypeName(null)).toBe("null object"));
 
     it("should return if the object is undefined", () => expect(getObjectTypeName(undefined)).toBe("null object"));
+
+    it("should return if it's an anonymous type", () => expect(getObjectTypeName({})).toBe("Object"));
+
+    it("should return if it's an array type", () => expect(getObjectTypeName([])).toBe("Array"));
+
+    it("should return if it's an unknown type", () =>
+    {
+        const a = {};
+        a.constructor = null;
+        expect(getObjectTypeName(a)).toBe("unknown type");
+    });
 });
