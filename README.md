@@ -67,7 +67,7 @@ The framework works with 3 dependency types:
 > **Important**: Scoped classes can not be resolved in the global container.
 
 # Scoped Containers
-Scoped container can be created from a parent container, and they isolate scoped services from other containers. When resolving dependencies, they can look on their parental hierarchy form already instantiated classes if required.
+A Scoped container can be created from a parent container, and they isolate scoped services from other containers. When resolving dependencies, they can look on their parental hierarchy form already instantiated classes if required.
 
 ```typescript
 const scopedContainer = container.createScopedInjector("my scope");
@@ -80,7 +80,7 @@ console.log(service.getValues());
 ```
 
 # Building and Validating the Dependency Tree
-The framework allow you to validate your dependency tree is consistent, to prevent runtime errors later. To validate your dependency tree, you can:
+The framework can validate if your dependency tree is consistent, to prevent runtime errors:
 
 ```typescript
 import { DependencyCollection } from "@miracledevs/paradigm.web.di";
