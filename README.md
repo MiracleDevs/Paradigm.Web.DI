@@ -1,13 +1,19 @@
 # Paradigm Web DI [![Build Status](https://travis-ci.org/MiracleDevs/Paradigm.Web.DI.svg?branch=master)](https://travis-ci.org/MiracleDevs/Paradigm.Web.DI)
 A minimal dependency injection framework for the web.
 
+# Installing
+
+```shell
+$ npm i @miracledevs/paradigm-web-di
+```
+
 # How to use
 The library was written to be easy to use. You can decorate your classes, or manually register them for later use.
 
 If you want to register your classes, just decorate your class with the `@Injectable` decorator. You'll need to provide the life time of your class:
 
 ```typescript
-import { Injectable, DependencyLifeTime } from "@miracledevs/paradigm.web.di";
+import { Injectable, DependencyLifeTime } from "@miracledevs/paradigm-web-di";
 
 @Injectable({ lifeTime: DependencyLifeTime.Singleton })
 export class ExampleService
@@ -35,7 +41,7 @@ export class AnotherService
 Or, if you prefer to have all the dependencies registered at the same time onto a single point, you can also use the procedural approach:
 
 ```typescript
-import { DependencyCollection } from "@miracledevs/paradigm.web.di";
+import { DependencyCollection } from "@miracledevs/paradigm-web-di";
 
 DependencyCollection.globalCollection.registerSingleton(ExampleService);
 DependencyCollection.globalCollection.registerSingleton(AnotherService, [ ExampleService ]);
@@ -48,7 +54,7 @@ To resolve your services, you need a reference to a service container. The easie
 global collection `DependencyCollection.globalCollection.buildContainer()`:
 
 ```typescript
-import { DependencyCollection } from "@miracledevs/paradigm.web.di";
+import { DependencyCollection } from "@miracledevs/paradigm-web-di";
 
 const container = DependencyCollection.globalCollection.buildContainer();
 const service = container.resolve(AnotherService);
@@ -83,7 +89,7 @@ console.log(service.getValues());
 The framework can validate if your dependency tree is consistent, to prevent runtime errors:
 
 ```typescript
-import { DependencyCollection } from "@miracledevs/paradigm.web.di";
+import { DependencyCollection } from "@miracledevs/paradigm-web-di";
 
 const container = DependencyCollection.globalCollection.buildContainer(true);
 ```
@@ -102,7 +108,7 @@ When validating the tree, the framework can validate:
 You can opt out from using the global collection when writing your program. If for some reason you want to use your own collection, or have multiple trees, you can specify the collection when declaring classes:
 
 ```typescript
-import { DependencyCollection } from "@miracledevs/paradigm.web.di";
+import { DependencyCollection } from "@miracledevs/paradigm-web-di";
 
 const customCollection = new DependencyCollection();
 
