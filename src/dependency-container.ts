@@ -16,7 +16,7 @@ export class DependencyContainer
 
     private constructor(parent: DependencyContainer, collection: DependencyCollection, name: string)
     {
-        this._scopedInstances = new Map();
+        this._scopedInstances = new Map<ObjectType, any>();
         this._collection = collection;
         this._parent = parent;
         this.name = name;

@@ -1,8 +1,6 @@
 import { ObjectType, getObjectTypeName } from "./object-type";
 import { DependencyLifeTime } from "./dependency-life-time";
-import { DependencyDescriptorMap } from "./dependency-descriptor-map";
 import { DependencyDescriptor } from "./dependency-descriptor";
-import 'reflect-metadata';
 import { DependencyContainer } from "./dependency-container";
 
 export class DependencyCollection
@@ -17,7 +15,7 @@ export class DependencyCollection
         return this._globalCollection;
     }
 
-    private readonly _registeredTypes: DependencyDescriptorMap;
+    private readonly _registeredTypes: Map<ObjectType, DependencyDescriptor>;
 
     constructor()
     {

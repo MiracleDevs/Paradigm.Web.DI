@@ -229,14 +229,4 @@ describe("Dependency Container", () =>
         const container = collection.buildContainer(true);
         expect(() => container.resolve(object as any)).toThrowError("Couldn't instantiate the type Object.\n - Bind must be called on a function");
     });
-
-    it("shouldn't instantiate functions", () =>
-    {
-        const collection = new DependencyCollection();
-        const func = (): any => null;
-
-        collection.register(func as any, DependencyLifeTime.Transient);
-        const container = collection.buildContainer(true);
-        expect(() => container.resolve(func as any)).toThrowError("Couldn't instantiate the type func.\n - Function.prototype.bind.apply(...) is not a constructor");
-    });
 });

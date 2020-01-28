@@ -1,6 +1,7 @@
 import { ObjectType } from "./object-type";
 import { DependencyLifeTime } from "./dependency-life-time";
 import { DependencyCollection } from "./dependency-collection";
+import 'reflect-metadata';
 
 export interface IInjectableDescriptor
 {

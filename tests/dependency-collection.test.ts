@@ -115,7 +115,6 @@ describe("Dependency Collection", () =>
         expect(() => collection.buildContainer()).not.toThrowError();
     });
 
-
     it("should build and validate successfully", () =>
     {
         const collection = new DependencyCollection();
@@ -207,7 +206,6 @@ describe("Dependency Collection", () =>
         expect(() => scopedOnSingletonCollection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Cannot consume scoped type 'ScopedDependencyClass' from singleton 'SingletonDependencyClass'.");
     });
 
-
     it("should validate if there is a simple circular reference", () =>
     {
         const collection = new DependencyCollection();
@@ -231,7 +229,6 @@ describe("Dependency Collection", () =>
 
         expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in ClassA: ClassA -> ClassB -> ClassA.\n - Circular dependency found in ClassB: ClassB -> ClassA -> ClassB.");
     });
-
 
     it("should validate if there is a complex circular reference", () =>
     {
