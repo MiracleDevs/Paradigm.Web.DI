@@ -1,4 +1,4 @@
-# Paradigm Web DI
+# Paradigm Web DI [![Build Status](https://travis-ci.org/MiracleDevs/Paradigm.Web.DI.svg?branch=master)](https://travis-ci.org/MiracleDevs/Paradigm.Web.DI)
 A minimal dependency injection framework for the web.
 
 # How to use
