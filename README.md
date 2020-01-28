@@ -44,7 +44,8 @@ DependencyCollection.globalCollection.registerSingleton(AnotherService, [ Exampl
 We recommend the first approach because we can automatically extract metadata when executing the decorator, and you don't need to manually
 describe the class dependencies. But, if you need to manually register a class, you can do it.
 
-To resolve your services, you need a reference to a service container. The easiest way to obtain a container when starting with the library, is by using `DependencyContainer.globalContainer`:
+To resolve your services, you need a reference to a service container. The easiest way to obtain a container is to build one from the
+global collection `DependencyCollection.buildContainer()`:
 
 ```typescript
 import { DependencyCollection } from "@miracledevs/paradigm.web.di";
@@ -53,10 +54,6 @@ const container = DependencyCollection.buildContainer();
 const service = container.resolve<AnotherService>();
 console.log(service.getValues());
 ```
-
-> Note: We don't recommend to use the globalContainer everywhere, but only to start the application. Classes can request the DependencyContainer on their constructors if they need something specific, or just ask for the right class.
-Also, when working with scopes, the global container shouldn't be directly referenced.
-
 
 # Lifetimes
 The framework works with 3 dependency types:
@@ -126,7 +123,7 @@ const container = customContainer.buildContainer(true);
 const b = container.resolve<ClassB>();
 ```
 
-# Building
+# Building and Testing
 
 To build the library:
 ```shell
