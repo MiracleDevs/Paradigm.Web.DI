@@ -6,8 +6,6 @@ import { DependencyCollection } from "./dependency-collection";
 
 export class DependencyContainer
 {
-    public static readonly GlobalScope = 'global';
-
     private _scopedInstances: Map<ObjectType, any>;
 
     private _collection: DependencyCollection;
@@ -16,7 +14,7 @@ export class DependencyContainer
 
     public readonly name: string;
 
-    constructor(parent?: DependencyContainer, collection?: DependencyCollection, name?: string)
+    private constructor(parent: DependencyContainer, collection: DependencyCollection, name: string)
     {
         this._scopedInstances = new Map();
         this._collection = collection;
@@ -24,7 +22,15 @@ export class DependencyContainer
         this.name = name;
     }
 
-    createScopedInjector(name: string): DependencyContainer
+    public static createFromCollection(collection: DependencyCollection, name?: string)
+    {
+        if (!collection)
+            throw new Error("Can not create a dependency container without a dependency collection.");
+
+        return new DependencyContainer(null, collection, name);
+    }
+
+    createScopedInjector(name?: string): DependencyContainer
     {
         return new DependencyContainer(this, this._collection, name);
     }
@@ -33,8 +39,8 @@ export class DependencyContainer
     {
         try
         {
-            if (objectType === DependencyContainer.constructor)
-                return this as any as T;
+            if (objectType as any === DependencyContainer)
+                return this as any;
 
             // this will throw if the object type is not registered.
             const descriptor = this._collection.get(objectType);
@@ -61,10 +67,15 @@ export class DependencyContainer
                     if (this._parent === null)
                         throw new Error("Can not instantiate a scoped type in the global container.");
 
-                    if (!this._scopedInstances.has(objectType))
-                        this._scopedInstances.set(objectType, this.createInstance(objectType, descriptor));
+                    const instance = this.getInstance(objectType);
 
-                    return this._scopedInstances.get(objectType);
+                    if (!instance)
+                    {
+                        this._scopedInstances.set(objectType, this.createInstance(objectType, descriptor));
+                        return this._scopedInstances.get(objectType);
+                    }
+
+                    return instance;
 
                 //////////////////////////////////////////////////////////////
                 // Transient
@@ -78,19 +89,14 @@ export class DependencyContainer
         }
         catch (e)
         {
-            throw new Error(`Couldn't instantiate the type ${getObjectTypeName(objectType)}.\n\t - ${e.message}`);
+            throw new Error(`Couldn't instantiate the type ${getObjectTypeName(objectType)}.\n - ${e.message}`);
         }
     }
 
     private createInstance<T>(objectType: ObjectType<T>, descriptor: DependencyDescriptor): T
     {
         const parameters = [null].concat(descriptor.dependencies.map(x => this.resolve(x)));
-        const instance = new (Function.prototype.bind.apply(objectType, parameters));
-
-        if (!instance)
-            throw new Error(`Unable to instantiate the type ${getObjectTypeName(objectType)}`);
-
-        return instance;
+        return new (Function.prototype.bind.apply(objectType, parameters));
     }
 
     private getInstance<T>(objectType: ObjectType<T>): T

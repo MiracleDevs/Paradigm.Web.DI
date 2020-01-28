@@ -51,7 +51,7 @@ global collection `DependencyCollection.globalCollection.buildContainer()`:
 import { DependencyCollection } from "@miracledevs/paradigm.web.di";
 
 const container = DependencyCollection.globalCollection.buildContainer();
-const service = container.resolve<AnotherService>();
+const service = container.resolve(AnotherService);
 console.log(service.getValues());
 ```
 
@@ -75,7 +75,7 @@ const scopedContainer = container.createScopedInjector("my scope");
 
 Once you have your scoped container, you can used it the same way you would use the global container:
 ```typescript
-const service = scopedContainer.resolve<AnotherService>();
+const service = scopedContainer.resolve(AnotherService);
 console.log(service.getValues());
 ```
 
@@ -120,7 +120,7 @@ class ClassB
 }
 
 const container = customContainer.buildContainer(true);
-const b = container.resolve<ClassB>();
+const b = container.resolve(ClassB);
 ```
 
 # Building and Testing

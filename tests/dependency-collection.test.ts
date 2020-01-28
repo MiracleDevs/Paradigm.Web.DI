@@ -156,7 +156,7 @@ describe("Dependency Collection", () =>
             }
         }
 
-        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - The type 'UnregisteredDependencyClass' depends on the type 'UnregisteredClass' but the latter is not registered.");
+        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - The type 'UnregisteredDependencyClass' depends on the type 'UnregisteredClass' but is not registered.");
     });
 
     it("should validate if a singleton depends on a scoped service", () =>

@@ -22,6 +22,7 @@ export class DependencyCollection
     constructor()
     {
         this._registeredTypes = new Map<ObjectType, DependencyDescriptor>();
+        this.register(DependencyContainer as any, DependencyLifeTime.Transient);
     }
 
     register<T = any>(objectType: ObjectType<T>, lifeTime: DependencyLifeTime, dependencies?: ObjectType[], instance?: T): void
@@ -89,7 +90,7 @@ export class DependencyCollection
             }
         }
 
-        return new DependencyContainer(null, this, "root");
+        return DependencyContainer.createFromCollection(this, "root");
     }
 
     private validateDependencyRegistration<T>(objectType: ObjectType<T>): void
@@ -100,7 +101,7 @@ export class DependencyCollection
         {
             if (!this.contains(dependencyType))
             {
-                throw new Error(`The type '${getObjectTypeName(objectType)}' depends on the type '${getObjectTypeName(dependencyType)}' but the latter is not registered.`);
+                throw new Error(`The type '${getObjectTypeName(objectType)}' depends on the type '${getObjectTypeName(dependencyType)}' but is not registered.`);
             }
 
             this.validateDependencyRegistration(dependencyType);
