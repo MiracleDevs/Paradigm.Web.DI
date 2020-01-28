@@ -45,12 +45,12 @@ We recommend the first approach because we can automatically extract metadata wh
 describe the class dependencies. But, if you need to manually register a class, you can do it.
 
 To resolve your services, you need a reference to a service container. The easiest way to obtain a container is to build one from the
-global collection `DependencyCollection.buildContainer()`:
+global collection `DependencyCollection.globalCollection.buildContainer()`:
 
 ```typescript
 import { DependencyCollection } from "@miracledevs/paradigm.web.di";
 
-const container = DependencyCollection.buildContainer();
+const container = DependencyCollection.globalCollection.buildContainer();
 const service = container.resolve<AnotherService>();
 console.log(service.getValues());
 ```
