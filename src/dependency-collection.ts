@@ -106,28 +106,27 @@ export class DependencyCollection
         }
     }
 
-    private validateCircularDependency<T>(objectType: ObjectType<T>, dependencies?: ObjectType[], relation?: string): void
+    private validateCircularDependency<T>(objectType: ObjectType<T>, hierarchy?: ObjectType[]): void
     {
-        if (!relation)
-            relation = getObjectTypeName(objectType);
+        if (!hierarchy)
+            hierarchy = [];
 
-        if (!dependencies)
-            dependencies = this.get(objectType).dependencies;
+        const descriptor = this.get(objectType);
+        const dependencies = descriptor.dependencies;
 
         for (const dependencyType of dependencies)
         {
-            const relationship = `${relation} -> ${getObjectTypeName(dependencyType)}`;
+            if (!this.contains(dependencyType))
+                continue;
 
-            if (dependencyType === objectType)
+            if (hierarchy.find(x => x === dependencyType))
             {
-                throw new Error(`Circular dependency found in ${getObjectTypeName(objectType)}: ${relationship}.`);
+                throw new Error(`Circular dependency found in service type '${getObjectTypeName(hierarchy[0])}': ${hierarchy.map(x => getObjectTypeName(x)).join(" -> ")} -> ${getObjectTypeName(dependencyType)}.`);
             }
 
-            if (this.contains(dependencyType))
-            {
-                const descriptor = this.get(dependencyType);
-                this.validateCircularDependency(objectType, descriptor.dependencies, relationship);
-            }
+            const newHierarchy = [...hierarchy];
+            newHierarchy.push(dependencyType);
+            this.validateCircularDependency(dependencyType, newHierarchy);
         }
     }
 

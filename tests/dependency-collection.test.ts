@@ -206,6 +206,21 @@ describe("Dependency Collection", () =>
         expect(() => scopedOnSingletonCollection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Cannot consume scoped type 'ScopedDependencyClass' from singleton 'SingletonDependencyClass'.");
     });
 
+    it("should validate if there is a self circular reference", () =>
+    {
+        const collection = new DependencyCollection();
+
+        class ClassA
+        {
+            constructor(public b: ClassA)
+            {
+            }
+        }
+
+        collection.registerTransient(ClassA, [ClassA]);
+        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in service type 'ClassA': ClassA -> ClassA.");
+    });
+
     it("should validate if there is a simple circular reference", () =>
     {
         const collection = new DependencyCollection();
@@ -227,7 +242,7 @@ describe("Dependency Collection", () =>
         collection.registerTransient(ClassA, [ClassB]);
         collection.registerTransient(ClassB, [ClassA]);
 
-        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in ClassA: ClassA -> ClassB -> ClassA.\n - Circular dependency found in ClassB: ClassB -> ClassA -> ClassB.");
+        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in service type 'ClassB': ClassB -> ClassA -> ClassB.\n - Circular dependency found in service type 'ClassA': ClassA -> ClassB -> ClassA.");
     });
 
     it("should validate if there is a complex circular reference", () =>
@@ -259,6 +274,38 @@ describe("Dependency Collection", () =>
         collection.registerTransient(ClassB, [ClassA]);
         collection.registerTransient(ClassC, [ClassB]);
 
-        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in ClassA: ClassA -> ClassC -> ClassB -> ClassA.\n - Circular dependency found in ClassB: ClassB -> ClassA -> ClassC -> ClassB.\n - Circular dependency found in ClassC: ClassC -> ClassB -> ClassA -> ClassC.");
+        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in service type 'ClassC': ClassC -> ClassB -> ClassA -> ClassC.\n - Circular dependency found in service type 'ClassA': ClassA -> ClassC -> ClassB -> ClassA.\n - Circular dependency found in service type 'ClassB': ClassB -> ClassA -> ClassC -> ClassB.");
+    });
+
+    it("should validate if there is complex circular down the hierarchy reference", () =>
+    {
+        const collection = new DependencyCollection();
+
+        class ClassA
+        {
+            constructor(public b: ClassB)
+            {
+            }
+        }
+
+        class ClassB
+        {
+            constructor(public c: ClassC)
+            {
+            }
+        }
+
+        class ClassC
+        {
+            constructor(public b: ClassB)
+            {
+            }
+        }
+
+        collection.registerTransient(ClassA, [ClassB]);
+        collection.registerTransient(ClassB, [ClassC]);
+        collection.registerTransient(ClassC, [ClassB]);
+
+        expect(() => collection.buildContainer(true)).toThrowError("Errors found on the dependency configuration:\n - Circular dependency found in service type 'ClassB': ClassB -> ClassC -> ClassB.\n - Circular dependency found in service type 'ClassC': ClassC -> ClassB -> ClassC.\n - Circular dependency found in service type 'ClassB': ClassB -> ClassC -> ClassB.");
     });
 });

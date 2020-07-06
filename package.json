@@ -38,9 +38,9 @@
     "homepage": "https://github.com/MiracleDevs/Paradigm.Web.DI#readme",
     "devDependencies": {
         "@types/jest": "^24.9.1",
-        "jest": "^25.1.0",
+        "jest": "^25.5.4",
         "reflect-metadata": "^0.1.13",
-        "ts-jest": "^26.1.0",
-        "typescript": "^3.7.5"
+        "ts-jest": "^26.1.1",
+        "typescript": "^3.9.6"
     }
 }
