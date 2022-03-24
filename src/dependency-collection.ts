@@ -54,7 +54,7 @@ export class DependencyCollection
         if (!this._registeredTypes.has(objectType))
             throw new Error(`The type ${getObjectTypeName(objectType)} is not registered.`);
 
-        return this._registeredTypes.get(objectType);
+        return this._registeredTypes.get(objectType) as DependencyDescriptor;
     }
 
     contains(objectType: ObjectType): boolean
@@ -78,7 +78,7 @@ export class DependencyCollection
                 }
                 catch (e)
                 {
-                    errors += ` - ${e.message}\n`;
+                    errors += ` - ${(e instanceof Error? e.message : e)}\n`;
                 }
             }
 

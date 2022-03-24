@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
         "module": "commonjs",
         "target": "es6",
         "moduleResolution": "node",
@@ -8,6 +10,7 @@
         "emitDecoratorMetadata": true,
         "noImplicitAny": true,
         "sourceMap": true,
+        "inlineSources": true,
         "declaration": true,
         "outDir": "./dist",
         "baseUrl": ".",

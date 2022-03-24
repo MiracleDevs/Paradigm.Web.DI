@@ -1,6 +1,6 @@
 {
     "name": "@miracledevs/paradigm-web-di",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "description": "A minimal dependency injection library for the web",
     "main": "./index.js",
     "types": "./index.d.ts",
@@ -12,9 +12,10 @@
         "watch-coverage": "jest --coverage --watch",
         "build": "npm install && tsc --project . --incremental",
         "watch": "npm run build -- --watch",
-        "build-publish": "npm run build && npm run copy-readme && npm run copy-package",
+        "build-publish": "npm run build && npm run copy-readme && npm run copy-package && npm run copy-source",
         "copy-readme": "cp ./readme.md ./dist/",
-        "copy-package": "cp ./package.json ./dist/"
+        "copy-package": "cp ./package.json ./dist/",
+        "copy-source": "cp -r ./src/* ./dist/"
     },
     "repository": {
         "type": "git",
@@ -37,10 +38,10 @@
     },
     "homepage": "https://github.com/MiracleDevs/Paradigm.Web.DI#readme",
     "devDependencies": {
-        "@types/jest": "^24.9.1",
-        "jest": "^25.5.4",
+        "@types/jest": "^27.4.1",
+        "jest": "^27.5.1",
         "reflect-metadata": "^0.1.13",
-        "ts-jest": "^26.1.1",
-        "typescript": "^3.9.6"
+        "ts-jest": "^27.1.3",
+        "typescript": "^4.6.2"
     }
 }

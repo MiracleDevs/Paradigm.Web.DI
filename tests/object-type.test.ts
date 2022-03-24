@@ -31,7 +31,7 @@ describe("getObjectTypeName method", () =>
     it("should return if it's an unknown type", () =>
     {
         const a = {};
-        a.constructor = null;
+        a.constructor = undefined as any;
         expect(getObjectTypeName(a)).toBe("unknown type");
     });
 });

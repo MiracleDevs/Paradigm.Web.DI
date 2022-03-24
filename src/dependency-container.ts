@@ -10,11 +10,11 @@ export class DependencyContainer
 
     private _collection: DependencyCollection;
 
-    private _parent: DependencyContainer;
+    private _parent?: DependencyContainer;
 
-    public readonly name: string;
+    public readonly name?: string;
 
-    private constructor(parent: DependencyContainer, collection: DependencyCollection, name: string)
+    private constructor(parent: DependencyContainer | undefined, collection: DependencyCollection, name: string | undefined)
     {
         this._scopedInstances = new Map<ObjectType, any>();
         this._collection = collection;
@@ -27,7 +27,7 @@ export class DependencyContainer
         if (!collection)
             throw new Error("Can not create a dependency container without a dependency collection.");
 
-        return new DependencyContainer(null, collection, name);
+        return new DependencyContainer(undefined, collection, name);
     }
 
     createScopedInjector(name?: string): DependencyContainer
@@ -64,7 +64,7 @@ export class DependencyContainer
                 // the scoped instances are scoped singletons, singletons that
                 // live the scoped injector instead of the global scope
                 case DependencyLifeTime.Scoped:
-                    if (this._parent === null)
+                    if (!this._parent)
                         throw new Error("Can not instantiate a scoped type in the global container.");
 
                     const instance = this.getInstance(objectType);
@@ -89,17 +89,17 @@ export class DependencyContainer
         }
         catch (e)
         {
-            throw new Error(`Couldn't instantiate the type ${getObjectTypeName(objectType)}.\n - ${e.message}`);
+            throw new Error(`Couldn't instantiate the type ${getObjectTypeName(objectType)}.\n - ${(e instanceof Error? e.message : e)}`);
         }
     }
 
     private createInstance<T>(objectType: ObjectType<T>, descriptor: DependencyDescriptor): T
     {
-        const parameters = [null].concat(descriptor.dependencies.map(x => this.resolve(x)));
+        const parameters = [null].concat(descriptor.dependencies.map(x => this.resolve(x))) as any;
         return new (Function.prototype.bind.apply(objectType, parameters));
     }
 
-    private getInstance<T>(objectType: ObjectType<T>): T
+    private getInstance<T>(objectType: ObjectType<T>): T | undefined
     {
         if (this._scopedInstances.has(objectType))
             return this._scopedInstances.get(objectType);
@@ -107,6 +107,6 @@ export class DependencyContainer
         if (this._parent)
             return this._parent.getInstance(objectType);
 
-        return null;
+        return undefined;
     }
 }

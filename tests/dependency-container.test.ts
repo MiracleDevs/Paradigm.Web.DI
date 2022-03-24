@@ -7,7 +7,7 @@ describe("Dependency Container", () =>
 {
     it("should create a container", () => expect(() => DependencyContainer.createFromCollection(DependencyCollection.globalCollection)).not.toThrowError());
 
-    it("should fail if no collection is provided.", () => expect(() => DependencyContainer.createFromCollection(null)).toThrowError("Can not create a dependency container without a dependency collection."));
+    it("should fail if no collection is provided.", () => expect(() => DependencyContainer.createFromCollection(undefined as any)).toThrowError("Can not create a dependency container without a dependency collection."));
 
     it("should create a scoped container.", () => expect(() => DependencyCollection.globalCollection.buildContainer().createScopedInjector("child")).not.toThrowError());
 

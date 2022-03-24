@@ -22,7 +22,7 @@ describe("Injectable decorator", () =>
 
     it("should register the class on a custom collection", () => expect(customCollection.contains(CustomCollectionTestClass)).toBeTruthy());
 
-    it("shouldn't allow to pass a null type", () => expect(() => Injectable()(null)).toThrowError("Can not decorate a null or undefined value."));
+    it("shouldn't allow to pass a null type", () => expect(() => Injectable()(undefined as any)).toThrowError("Can not decorate a null or undefined value."));
 
     it("should allow to pass an undefined descriptor", () =>
     {

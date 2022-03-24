@@ -13,7 +13,7 @@ describe("DependencyDescriptor", () =>
 
     }
 
-    it("should allow create a new instance", () => expect(new DependencyDescriptor(DependencyLifeTime.Transient, null, null)).not.toBeNull());
+    it("should allow create a new instance", () => expect(new DependencyDescriptor(DependencyLifeTime.Transient, [], null)).not.toBeNull());
 
     it("should access fields after instantiation", () =>
     {
